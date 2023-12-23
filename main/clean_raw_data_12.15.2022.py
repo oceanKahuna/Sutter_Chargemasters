@@ -1,9 +1,5 @@
 import pandas as pd 
-<<<<<<< HEAD
-import glob 
-=======
 import glob, os, gzip 
->>>>>>> 8cce0dc (rebasing without large combined csv)
 
 # for csvs in the raw_data folder, delete the first row
 for file in glob.glob("raw_data_12.15.2022/*.csv"):
@@ -12,29 +8,6 @@ for file in glob.glob("raw_data_12.15.2022/*.csv"):
     # write to clean_data_12.15.2022 folder, get filename from after the slash 
     filename = file.split("/")[-1]
     print(filename)
-<<<<<<< HEAD
-    df.to_csv(f"clean_data_12.15.2022/{filename}", index=False)
-
-# for csvs in clean_data_12.15.2022 folder, check if all headers are the same
-columns = None
-for file in glob.glob("clean_data_12.15.2022/*.csv"):
-    df = pd.read_csv(file, encoding = "ISO-8859-1")
-    if columns is not None:
-        previous_columns = columns
-        columns = df.columns
-        # check if column arrays are the same
-        print(len(columns))
-        print(len(previous_columns))
-        if len(columns) != len(previous_columns):
-            # print columns that are not the same
-            print(file)
-            for column in columns:
-                if column not in previous_columns:
-                    print(column)
-            for column in previous_columns:
-                if column not in columns:
-                    print(column)
-=======
     df['hospital_id'] = filename.split('.')[0]
     df.to_csv(f"clean_data_12.15.2022/{filename}", index=False)
 
@@ -71,18 +44,11 @@ kahi_df = df[df['hospital_id'] == '990298651-1477519908_SUTTER-PACIFIC-KAHI-MOHA
 # drop kahi from initial df 
 df = df[df['hospital_id'] != '990298651-1477519908_SUTTER-PACIFIC-KAHI-MOHALA_standardcharges']
 
-df.to_csv('sutter_combined_chargemasters.csv', index=False)
+# compress file 
+df.to_pickle('sutter_combined_chargemasters.zip', index=False, compression='zip')
 kahi_df.to_csv('kahi_chargemaster.csv', index=False)
-
-# compress sutter_combined_chargemaster as filesize excceeds 100MB 
-import gzip
 
 # Compress the file 'sutter_combined_chargemasters.csv' using gzip
 with open('sutter_combined_chargemasters.csv', 'rb') as file_in:
     with gzip.open('sutter_combined_chargemasters.gz', 'wb') as file_out:
         file_out.writelines(file_in)
-
-# Remove the original uncompressed file
-import os
-os.remove('sutter_combined_chargemasters.csv')
->>>>>>> 8cce0dc (rebasing without large combined csv)
